@@ -13,7 +13,9 @@ export interface ICompanyParams {
 
 const buildUrlFromParams = (params: ICompanyParams): string => {
   let baseUrl = "https://www.google.com/search?q=";
-  return (baseUrl += Object.values(params)
+  const paramsFiltered: ICompanyParams = { name: params.name };
+  if (params.address) paramsFiltered["address"] = params.address;
+  return (baseUrl += Object.values(paramsFiltered)
     .map((value) => value.trim().replace(/\s+/g, "+"))
     .join("+"));
 };
@@ -131,7 +133,6 @@ const saveCompanyDataInDB = async (
   try {
     dataToSave = await verifySirenProvided(name, siren);
   } catch (err) {
-    console.log(err);
     return;
   }
   const companyRepository = getRepository(Company);
