@@ -10,7 +10,6 @@
     "start:node": "node dist/index.js",
     "start": "npm run start:node",
     "build:ts": "tsc",
-    "prebuild": "npm run swagger",
     "build": "npm run build:ts",
     "test": "NODE_ENV=test jest",
     "test:verbose": "NODE_ENV=test jest --verbose",
@@ -20,8 +19,7 @@
     "watch": "concurrently \"npm:watch:ts\" \"npm:watch:node\"",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "swagger": "tsoa spec"
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "devDependencies": {
     "@types/cheerio": "^0.22.29",
