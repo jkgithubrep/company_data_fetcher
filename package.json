@@ -6,6 +6,23 @@
   "repository": "git@gitlab.com:jkgitlabwork/company_data_fetcher.git",
   "author": "Jalil Kettani <3053619-jkgitlabwork@users.noreply.gitlab.com>",
   "license": "GPL-3.0-only",
+  "scripts": {
+    "start:node": "node dist/index.js",
+    "start": "npm run start:node",
+    "build:ts": "tsc",
+    "prebuild": "npm run swagger",
+    "build": "npm run build:ts",
+    "test": "NODE_ENV=test jest",
+    "test:verbose": "NODE_ENV=test jest --verbose",
+    "test:coverage": "jest --coverage",
+    "watch:ts": "tsc -w",
+    "watch:node": "nodemon dist/index.js",
+    "watch": "concurrently \"npm:watch:ts\" \"npm:watch:node\"",
+    "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "swagger": "tsoa spec"
+  },
   "devDependencies": {
     "@types/express": "^4.17.12",
     "@types/jest": "^26.0.23",
