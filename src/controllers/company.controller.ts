@@ -1,7 +1,7 @@
 import { Route, Get, Tags } from "tsoa";
 import {
   fetchCompanyPhoneNumber,
-  ICompanyPayload,
+  ICompanyParams,
 } from "../repositories/company";
 
 @Route("api/company")
@@ -9,8 +9,8 @@ import {
 export class CompanyController {
   @Get("/")
   public async fetchCompanyPhoneNumber(
-    payload: ICompanyPayload
+    params: ICompanyParams
   ): Promise<string> {
-    return fetchCompanyPhoneNumber(payload);
+    return fetchCompanyPhoneNumber(params);
   }
 }

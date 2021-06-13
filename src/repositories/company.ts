@@ -4,21 +4,21 @@ import cheerio from "cheerio";
 import { Company } from "../models";
 import { NotFoundError, ValidationError } from "../errors";
 
-export interface ICompanyPayload {
+export interface ICompanyParams {
   name: string;
   siren?: string;
   address?: string;
 }
 
-const buildUrlFromPayload = (payload: ICompanyPayload): string => {
+const buildUrlFromParams = (params: ICompanyParams): string => {
   let baseUrl = "https://www.google.com/search?q=";
-  return (baseUrl += Object.values(payload)
+  return (baseUrl += Object.values(params)
     .map((value) => value.trim().replace(/\s+/, "+"))
     .join("+"));
 };
 
-const getResponseData = async (payload: ICompanyPayload): Promise<string> => {
-  const queryUrl = buildUrlFromPayload(payload);
+const getResponseData = async (params: ICompanyParams): Promise<string> => {
+  const queryUrl = buildUrlFromParams(params);
   console.log(queryUrl);
   const response = await axios.get(queryUrl, {
     responseType: "arraybuffer",
@@ -35,9 +35,9 @@ const getResponseData = async (payload: ICompanyPayload): Promise<string> => {
 };
 
 const fetchPhoneNumber = async (
-  payload: ICompanyPayload
+  params: ICompanyParams
 ): Promise<string | null> => {
-  const responseData = await getResponseData(payload);
+  const responseData = await getResponseData(params);
   const $ = cheerio.load(responseData);
   let phoneNumber = null;
   $("span").each((i, e) => {
@@ -63,20 +63,20 @@ const validateSiren = (siren: string | undefined): void => {
   if (/^\d+$/.test(siren)) throw new ValidationError(genericMessage);
 };
 
-const validatePayload = ({ name, address, siren }: ICompanyPayload): void => {
+const validateParams = ({ name, address, siren }: ICompanyParams): void => {
   validateName(name);
   validateAddress(address);
   validateSiren(siren);
 };
 
 const saveCompanyDataInDB = async (
-  payload: ICompanyPayload,
+  params: ICompanyParams,
   phoneNumber: string
 ): Promise<Company> => {
   const companyRepository = getRepository(Company);
   const company = new Company();
   const data = {
-    name: payload.name,
+    name: params.name,
     phone_number: phoneNumber,
   };
   return companyRepository.save({
@@ -86,11 +86,11 @@ const saveCompanyDataInDB = async (
 };
 
 export const fetchCompanyPhoneNumber = async (
-  payload: ICompanyPayload
+  params: ICompanyParams
 ): Promise<string> => {
-  validatePayload(payload);
-  const phoneNumber = await fetchPhoneNumber(payload);
+  validateParams(params);
+  const phoneNumber = await fetchPhoneNumber(params);
   if (!phoneNumber) throw new NotFoundError("Phone number not found.");
-  if (payload.siren) await saveCompanyDataInDB(payload, phoneNumber);
+  if (params.siren) await saveCompanyDataInDB(params, phoneNumber);
   return phoneNumber;
 };

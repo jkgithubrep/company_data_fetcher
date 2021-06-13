@@ -1,11 +1,11 @@
 import express, { Request, Response } from "express";
 import { NotFoundError, ValidationError } from "../errors";
 import { CompanyController } from "../controllers/company.controller";
-import { ICompanyPayload } from "../repositories/company";
+import { ICompanyParams } from "../repositories/company";
 
 const router = express.Router();
 
-type CompanyRequest = Request<unknown, unknown, unknown, ICompanyPayload>;
+type CompanyRequest = Request<unknown, unknown, unknown, ICompanyParams>;
 
 router.get("/", async (req: CompanyRequest, res: Response) => {
   const controller = new CompanyController();
