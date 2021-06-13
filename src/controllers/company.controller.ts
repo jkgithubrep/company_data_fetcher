@@ -1,14 +1,16 @@
-import { Route, Get, Body, Tags } from "tsoa";
-import { Company } from "../models";
-import { fetchCompanyData, ICompanyPayload } from "../repositories/company";
+import { Route, Get, Tags } from "tsoa";
+import {
+  fetchCompanyPhoneNumber,
+  ICompanyPayload,
+} from "../repositories/company";
 
 @Route("api/company")
-@Tags("User")
+@Tags("Company")
 export class CompanyController {
   @Get("/")
-  public async fetchCompanyData(
-    @Body() body: ICompanyPayload
-  ): Promise<Company> {
-    return fetchCompanyData(body);
+  public async fetchCompanyPhoneNumber(
+    payload: ICompanyPayload
+  ): Promise<string> {
+    return fetchCompanyPhoneNumber(payload);
   }
 }

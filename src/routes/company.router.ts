@@ -1,21 +1,26 @@
 import express, { Request, Response } from "express";
-import { ValidationError } from "../errors";
+import { NotFoundError, ValidationError } from "../errors";
 import { CompanyController } from "../controllers/company.controller";
+import { ICompanyPayload } from "../repositories/company";
 
 const router = express.Router();
 
-router.get("/", async (req: Request, res: Response) => {
+type CompanyRequest = Request<unknown, unknown, unknown, ICompanyPayload>;
+
+router.get("/", async (req: CompanyRequest, res: Response) => {
   const controller = new CompanyController();
   try {
-    console.log(req.query);
-    const data = { phone_number: "XXXX " };
-    // const data = await controller.fetchCompanyData(req.body);
-    res.send(data);
+    const phoneNumber = await controller.fetchCompanyPhoneNumber(req.query);
+    res.send(phoneNumber);
   } catch (err) {
-    if (err instanceof ValidationError) {
+    if (err instanceof NotFoundError) {
+      res.status(200);
+      res.send(err.message);
+    } else if (err instanceof ValidationError) {
       res.status(400);
       res.send(err.message);
     } else {
+      console.log(err);
       res.status(500);
       res.send("Please try again later.");
     }
